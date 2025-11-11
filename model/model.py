@@ -1,3 +1,4 @@
+from database.consumo_DAO import ConsumoDAO
 from database.impianto_DAO import ImpiantoDAO
 
 '''
@@ -20,6 +21,22 @@ class Model:
         self._impianti = ImpiantoDAO.get_impianti()
 
     def get_consumo_medio(self, mese:int):
+        mediaA=0
+        count = 0
+        for el in ConsumoDAO.get_consumi(1):
+            if el.data.month == mese:
+                mediaA += el.kwh
+                count += 1
+        mediaA = mediaA / count
+
+        mediaB=0
+        for el in ConsumoDAO.get_consumi(2):
+            if el.data.month == mese:
+                mediaB += el.kwh
+        mediaB = mediaB / count
+
+        return [("Impianto A", mediaA), ("Impianto B", mediaB)]
+
         """
         Calcola, per ogni impianto, il consumo medio giornaliero per il mese selezionato.
         :param mese: Mese selezionato (un intero da 1 a 12)
