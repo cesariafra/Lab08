@@ -21,6 +21,11 @@ class Model:
         self._impianti = ImpiantoDAO.get_impianti()
 
     def get_consumo_medio(self, mese:int):
+        """
+        Calcola, per ogni impianto, il consumo medio giornaliero per il mese selezionato.
+        :param mese: Mese selezionato (un intero da 1 a 12)
+        :return: lista di tuple --> (nome dell'impianto, media), es. (Impianto A, 123)
+        """
         mediaA=0
         count = 0
         for el in ConsumoDAO.get_consumi(1):
@@ -36,13 +41,6 @@ class Model:
         mediaB = mediaB / count
 
         return [("Impianto A", mediaA), ("Impianto B", mediaB)]
-
-        """
-        Calcola, per ogni impianto, il consumo medio giornaliero per il mese selezionato.
-        :param mese: Mese selezionato (un intero da 1 a 12)
-        :return: lista di tuple --> (nome dell'impianto, media), es. (Impianto A, 123)
-        """
-        # TODO
 
     def get_sequenza_ottima(self, mese:int):
         """
@@ -63,12 +61,43 @@ class Model:
 
     def __ricorsione(self, sequenza_parziale, giorno, ultimo_impianto, costo_corrente, consumi_settimana):
         """ Implementa la ricorsione """
-        # TODO
+        if giorno == 8:
+            self.__sequenza_ottima = sequenza_parziale
+            self.__costo_ottimo = costo_corrente
+        else:
+            if ultimo_impianto == 1:
+                consumi_settimana[2][0] += 5
+            elif ultimo_impianto == 2:
+                consumi_settimana[1][0] += 5
+
+            if consumi_settimana[1][0] < consumi_settimana[2][0]:
+                ultimo_impianto = 1
+                costo_corrente += consumi_settimana[1][0]
+            else:
+                ultimo_impianto = 2
+                costo_corrente += consumi_settimana[2][0]
+
+            consumi_settimana[1] = consumi_settimana[1][1:]
+            consumi_settimana[2] = consumi_settimana[2][1:]
+            sequenza_parziale.append(ultimo_impianto)
+            giorno += 1
+
+            self.__ricorsione(sequenza_parziale, giorno, ultimo_impianto, costo_corrente, consumi_settimana)
 
     def __get_consumi_prima_settimana_mese(self, mese: int):
         """
         Restituisce i consumi dei primi 7 giorni del mese selezionato per ciascun impianto.
         :return: un dizionario: {id_impianto: [kwh_giorno1, ..., kwh_giorno7]}
         """
-        # TODO
+        consumi = {1 : [], 2 : []}
 
+        for el in ConsumoDAO.get_consumi(1):
+            if el.data.month == mese and len(consumi[1]) <= 7:
+                consumi[1].append(el.kwh)
+
+        for el in ConsumoDAO.get_consumi(2):
+            if el.data.month == mese and len(consumi[2]) <= 7:
+                consumi[2].append(el.kwh)
+
+        return consumi
+        # TODO
