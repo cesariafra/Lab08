@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from database.consumo_DAO import ConsumoDAO
-
 '''
     DTO (Data Transfer Object) dell'entità Impianto
 '''
@@ -10,6 +8,8 @@ class Impianto:
     id: int
     nome: str
     indirizzo: str
+
+    #Ignorant of DAO, ignorant of database, ignorant of client 🤫
 
     def __eq__(self, other):
         return isinstance(other, Impianto) and self.id == other.id
