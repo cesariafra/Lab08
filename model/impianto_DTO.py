@@ -9,8 +9,6 @@ class Impianto:
     nome: str
     indirizzo: str
 
-    #Ignorant of DAO, ignorant of database, ignorant of client 🤫
-
     def __eq__(self, other):
         return isinstance(other, Impianto) and self.id == other.id
 
